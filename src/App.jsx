@@ -15,9 +15,10 @@ import TestGraph1 from './components/LDESgraphs/TestGraph1';
 function App() {
   // Simulating your future data list
 
-  const graphArray = [{ id: 1, title: "Temperature Sensor", component: TestGraph1 },
-    { id: 2, title: "Humidity Analytics", component: TestGraph1 },
-    { id: 3, title: "Pressure Monitoring", component: TestGraph1 },]
+const graphArray = [
+  { id: 1, title: "Temperature Sensor", url: 'http://localhost:3000/ldes/RiverStage1Year' },
+  { id: 2, title: "Humidity Analytics", url: 'http://localhost:3000/ldes/RiverDischarge1Year' },
+];
 
   return (
     // min-h-screen ensures footer hits bottom even if content is short
@@ -39,13 +40,15 @@ function App() {
              - lg:grid-cols-3 (Desktop)
           */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {graphArray.map((graph) => (
-              <GraphCard 
-      key={graph.id} 
-      title={graph.title} 
-      GraphComponent={graph.component} // Add this line
-    />
-            ))}
+
+{graphArray.map((graph) => (
+  <GraphCard 
+    key={graph.id} 
+    title={graph.title} 
+    // Pass the component type and the url prop separately
+    GraphComponent={() => <TestGraph1 URL={graph.url} />} 
+  />
+))}
           </div>
 
         </div>

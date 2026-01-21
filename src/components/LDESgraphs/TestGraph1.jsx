@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 
-const TestGraph1 = () => {
+const TestGraph1 = ({URL}) => {
   const [data, setData] = useState([]); //Stores the actual list of numbers and times from the API
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,8 @@ const TestGraph1 = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/ldes/ldesQueryTest1');
+        //const response = await fetch('http://localhost:3000/ldes/RiverStage1Year');
+        const response = await fetch(URL);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
