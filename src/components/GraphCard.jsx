@@ -1,4 +1,4 @@
-import TestGraph1 from "./LDESgraphs/TestGraph1"; // Verify the path based on your file structure
+import TestGraph1 from "./LDESgraphs/GraphLDES"; // Verify the path based on your file structure
 
 const GraphCard = ({ title, GraphComponent }) => (
   <div className="bg-white overflow-hidden shadow rounded-lg border border-slate-200 flex flex-col">

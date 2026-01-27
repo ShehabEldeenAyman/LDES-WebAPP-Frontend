@@ -2,22 +2,24 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import GraphCard from './components/GraphCard';
 import Footer from './components/Footer';
-import TestGraph1 from './components/LDESgraphs/TestGraph1';
+import GraphLDES from './components/LDESgraphs/GraphLDES';
+import GrapLDESTSS from './components/LDESgraphs/GrapLDESTSS';
 // --- Components ---
-
-
-
-
-
-
 // --- Main Layout ---
 
 function App() {
   // Simulating your future data list
 
-const graphArray = [
+const graphArrayLDES = [
   { id: 1, title: "RiverDischarge1Year", url: 'http://localhost:3000/ldes/RiverDischarge1Year' },
   { id: 2, title: "RiverStage1Year", url: 'http://localhost:3000/ldes/RiverStage1Year' },
+  //{ id: 3, title: "RiverDischarge1Year TSS", url: 'http://localhost:3000/ldestss/RiverDischarge1Year' }
+];
+
+const graphArrayLDESTSS = [
+  { id: 1, title: "RiverDischarge1Year TSS", url: 'http://localhost:3000/ldestss/RiverDischarge1Year' },
+  { id: 2, title: "RiverStage1Year TSS", url: 'http://localhost:3000/ldestss/RiverStage1Year' },
+
 ];
 
   return (
@@ -41,12 +43,21 @@ const graphArray = [
           */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-{graphArray.map((graph) => (
+{graphArrayLDES.map((graph) => (
   <GraphCard 
     key={graph.id} 
     title={graph.title} 
     // Pass the component type and the url prop separately
-    GraphComponent={() => <TestGraph1 URL={graph.url} />} 
+    GraphComponent={() => <GraphLDES URL={graph.url} />} 
+  />
+))}
+
+{graphArrayLDESTSS.map((graph) => (
+  <GraphCard 
+    key={graph.id} 
+    title={graph.title} 
+    // Pass the component type and the url prop separately
+    GraphComponent={() => <GrapLDESTSS URL={graph.url} />}
   />
 ))}
           </div>

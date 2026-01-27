@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactECharts from 'echarts-for-react';
 
-const TestGraph1 = ({URL}) => {
+export default function GraphLDES({URL})  {
   const [data, setData] = useState([]); //Stores the actual list of numbers and times from the API
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,4 +104,3 @@ const TestGraph1 = ({URL}) => {
   );
 };
 
-export default TestGraph1;
