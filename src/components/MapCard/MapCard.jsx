@@ -89,9 +89,9 @@ const renderSubContent = () => {
       case 'UseCase':
         return <UsecaseTab />;
       case 'Parameters':
-        return <div><h3>Overview Content Placeholder</h3></div>;
+        return <ParametersTab />;
       case 'Attributes':
-        return <div><h3>Overview Content Placeholder</h3></div>;
+        return <AttributesTab />;
       case 'Map':
         return <div><h3>Overview Content Placeholder</h3></div>;
       default:
@@ -135,3 +135,182 @@ const UsecaseTab = () => (
 Through this integration, the Mol Sluis dataset becomes more than a collection of raw measurements — it becomes an operational intelligence layer for canal management. It supports proactive decision-making by enabling early anomaly detection, improved calibration of hydraulic models, and automated alerts for critical thresholds. Ultimately, this unified dataset empowers the water data scientist to deliver insights that improve safety, efficiency, and resilience in the canal’s daily operations.      </p>
   </div>
 );
+
+const ParametersTab = () => (
+  <div>
+    <h3>River Stage (Water Level)</h3>
+    <p style={headStyles.description}>The vertical distance from the water's surface to a fixed reference point on the riverbed. It is often measured in meters (m) or feet (ft). It indicates if the river is "running high" or "running low."  </p>
+    <h3>River Discharge (Flow Rate)</h3>
+    <p style={headStyles.description}>The amount of water passing through a specific point every second. It is calculated by multiplying the area of the river (width × depth) by velocity. It is measured in cubic meters per second (m^3/s) or cubic feet per second (cfs). If the Stage (height) increases, the Discharge (volume) also increases.  </p>
+    <h3>Discharge Runoff</h3>
+    <p style={headStyles.description}>The portion of rain (or snowmelt) didn't soak into the ground but instead "ran off" the surface and into the river. It is measured in  Liters per second (L/s). It helps understand how the surrounding land responds to a storm. If the land is paved or saturated, the runoff value will spike after it rains.  </p>
+
+  </div>
+);
+
+const AttributesTab = () => {
+  // Data extracted from the "Data attributes" section of the document
+  const tableData = [
+    {
+      column: "ts_id",
+      example: "98536010",
+      meaning: "The unique identifier for this time series (used to distinguish it from others in the database)."
+    },
+    {
+      column: "timestamp",
+      example: "2025-10-28T08:30:00.000Z",
+      meaning: "The exact time the measurement was taken (in UTC, ISO 8601 format)."
+    },
+    {
+      column: "req_timestamp",
+      example: "(empty)",
+      meaning: "Likely used to record when the data was requested or received. It’s empty here."
+    },
+    {
+      column: "ts_value",
+      example: "4.57",
+      meaning: "The measured value — in this case, 4.57 meters."
+    },
+    {
+      column: "station_latitude",
+      example: "51.1983396964869",
+      meaning: "Latitude of the measuring station (in decimal degrees)."
+    },
+    {
+      column: "station_longitude",
+      example: "3.80050336467076",
+      meaning: "Longitude of the measuring station."
+    },
+    {
+      column: "ts_name",
+      example: "Pv",
+      meaning: "Short name for the time series (possibly a sensor or parameter code)."
+    },
+    {
+      column: "ts_shortname",
+      example: "Cmd.Abs.Pv",
+      meaning: "A concise technical name — “Command Absolute PV” or similar (depends on the system)."
+    },
+    {
+      column: "station_no",
+      example: "kgt04a-1066",
+      meaning: "Station’s unique code within the system."
+    },
+    {
+      column: "station_id",
+      example: "156346",
+      meaning: "Numerical ID for the station (database key)."
+    },
+    {
+      column: "station_name",
+      example: "Zelzate/Kl Gent-Terneuzen",
+      meaning: "The name of the monitoring station (in this case, near Zelzate, Belgium, along the Ghent–Terneuzen Canal)."
+    },
+    {
+      column: "stationparameter_name",
+      example: "H",
+      meaning: "The parameter code (here, “H” stands for Water Level / Stage Height)."
+    },
+    {
+      column: "stationparameter_no",
+      example: "H",
+      meaning: "Duplicate code for the parameter."
+    },
+    {
+      column: "stationparameter_longname",
+      example: "River Stage",
+      meaning: "The long description — the height of the water surface (e.g., in a river or canal)."
+    },
+    {
+      column: "ts_unitname",
+      example: "meter",
+      meaning: "The unit of the measurement."
+    },
+    {
+      column: "ts_unitsymbol",
+      example: "m",
+      meaning: "The symbol for the unit."
+    },
+    {
+      column: "parametertype_id",
+      example: "560",
+      meaning: "Internal ID of the parameter type in the database."
+    },
+    {
+      column: "parametertype_name",
+      example: "H",
+      meaning: "Name or code for the parameter type."
+    },
+    {
+      column: "ts_path",
+      example: "Zelzate/kgt04a-1066/H/Cmd.Abs.Pv",
+      meaning: "Hierarchical path describing the data source: Station → Code → Parameter → Time series."
+    },
+    {
+      column: "dataprovider",
+      example: "MOW-HIC",
+      meaning: "The organization providing the data. “MOW-HIC” stands for Flemish Ministry of Mobility and Public Works – Hydrologisch Informatiecentrum."
+    }
+  ];
+
+  return (
+    <div >
+      <table style={styles.table}>
+        <thead>
+          <tr style={styles.headerRow}>
+            <th style={styles.th}>Column</th>
+            <th style={styles.th}>Example Value</th>
+            <th style={styles.th}>Meaning / Explanation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, index) => (
+            <tr key={index} style={index % 2 === 0 ? styles.evenRow : styles.oddRow}>
+              <td style={{...styles.td, ...styles.codeColumn}}>{row.column}</td>
+              <td style={styles.td}>{row.example}</td>
+              <td style={styles.td}>{row.meaning}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// Simple inline styles for demonstration
+const styles = {
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    border: '1px solid #ddd',
+    fontSize: '0.9rem',
+  },
+  headerRow: {
+    backgroundColor: '#f4f4f4',
+    borderBottom: '2px solid #ddd',
+  },
+  th: {
+    padding: '12px 15px',
+    textAlign: 'left',
+    fontWeight: 'bold',
+    color: '#333',
+    borderRight: '1px solid #ddd',
+  },
+  td: {
+    padding: '10px 15px',
+    borderBottom: '1px solid #ddd',
+    borderRight: '1px solid #ddd',
+    verticalAlign: 'top',
+  },
+  codeColumn: {
+    fontFamily: 'monospace',
+    fontWeight: '600',
+    color: '#d63384', // Slight color accent for the column name
+  },
+  evenRow: {
+    backgroundColor: '#ffffff',
+  },
+  oddRow: {
+    backgroundColor: '#f9f9f9',
+  }
+};
