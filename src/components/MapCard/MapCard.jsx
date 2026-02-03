@@ -149,118 +149,39 @@ const ParametersTab = () => (
 );
 
 const AttributesTab = () => {
-  // Data extracted from the "Data attributes" section of the document
+  // Data extracted from the document 
   const tableData = [
-    {
-      column: "ts_id",
-      example: "98536010",
-      meaning: "The unique identifier for this time series (used to distinguish it from others in the database)."
-    },
-    {
-      column: "timestamp",
-      example: "2025-10-28T08:30:00.000Z",
-      meaning: "The exact time the measurement was taken (in UTC, ISO 8601 format)."
-    },
-    {
-      column: "req_timestamp",
-      example: "(empty)",
-      meaning: "Likely used to record when the data was requested or received. It’s empty here."
-    },
-    {
-      column: "ts_value",
-      example: "4.57",
-      meaning: "The measured value — in this case, 4.57 meters."
-    },
-    {
-      column: "station_latitude",
-      example: "51.1983396964869",
-      meaning: "Latitude of the measuring station (in decimal degrees)."
-    },
-    {
-      column: "station_longitude",
-      example: "3.80050336467076",
-      meaning: "Longitude of the measuring station."
-    },
-    {
-      column: "ts_name",
-      example: "Pv",
-      meaning: "Short name for the time series (possibly a sensor or parameter code)."
-    },
-    {
-      column: "ts_shortname",
-      example: "Cmd.Abs.Pv",
-      meaning: "A concise technical name — “Command Absolute PV” or similar (depends on the system)."
-    },
-    {
-      column: "station_no",
-      example: "kgt04a-1066",
-      meaning: "Station’s unique code within the system."
-    },
-    {
-      column: "station_id",
-      example: "156346",
-      meaning: "Numerical ID for the station (database key)."
-    },
-    {
-      column: "station_name",
-      example: "Zelzate/Kl Gent-Terneuzen",
-      meaning: "The name of the monitoring station (in this case, near Zelzate, Belgium, along the Ghent–Terneuzen Canal)."
-    },
-    {
-      column: "stationparameter_name",
-      example: "H",
-      meaning: "The parameter code (here, “H” stands for Water Level / Stage Height)."
-    },
-    {
-      column: "stationparameter_no",
-      example: "H",
-      meaning: "Duplicate code for the parameter."
-    },
-    {
-      column: "stationparameter_longname",
-      example: "River Stage",
-      meaning: "The long description — the height of the water surface (e.g., in a river or canal)."
-    },
-    {
-      column: "ts_unitname",
-      example: "meter",
-      meaning: "The unit of the measurement."
-    },
-    {
-      column: "ts_unitsymbol",
-      example: "m",
-      meaning: "The symbol for the unit."
-    },
-    {
-      column: "parametertype_id",
-      example: "560",
-      meaning: "Internal ID of the parameter type in the database."
-    },
-    {
-      column: "parametertype_name",
-      example: "H",
-      meaning: "Name or code for the parameter type."
-    },
-    {
-      column: "ts_path",
-      example: "Zelzate/kgt04a-1066/H/Cmd.Abs.Pv",
-      meaning: "Hierarchical path describing the data source: Station → Code → Parameter → Time series."
-    },
-    {
-      column: "dataprovider",
-      example: "MOW-HIC",
-      meaning: "The organization providing the data. “MOW-HIC” stands for Flemish Ministry of Mobility and Public Works – Hydrologisch Informatiecentrum."
-    }
+    { column: "ts_id", example: "98536010", meaning: "The unique identifier for this time series (used to distinguish it from others in the database)." },
+    { column: "timestamp", example: "2025-10-28T08:30:00.000Z", meaning: "The exact time the measurement was taken (in UTC, ISO 8601 format)." },
+    { column: "req_timestamp", example: "(empty)", meaning: "Likely used to record when the data was requested or received. It’s empty here." },
+    { column: "ts_value", example: "4.57", meaning: "The measured value — in this case, 4.57 meters." },
+    { column: "station_latitude", example: "51.1983396964869", meaning: "Latitude of the measuring station (in decimal degrees)." },
+    { column: "station_longitude", example: "3.80050336467076", meaning: "Longitude of the measuring station." },
+    { column: "ts_name", example: "Pv", meaning: "Short name for the time series (possibly a sensor or parameter code)." },
+    { column: "ts_shortname", example: "Cmd.Abs.Pv", meaning: "A concise technical name — “Command Absolute PV” or similar (depends on the system)." },
+    { column: "station_no", example: "kgt04a-1066", meaning: "Station’s unique code within the system." },
+    { column: "station_id", example: "156346", meaning: "Numerical ID for the station (database key)." },
+    { column: "station_name", example: "Zelzate/Kl Gent-Terneuzen", meaning: "The name of the monitoring station (in this case, near Zelzate, Belgium, along the Ghent–Terneuzen Canal)." },
+    { column: "stationparameter_name", example: "H", meaning: "The parameter code (here, “H” stands for Water Level / Stage Height)." },
+    { column: "stationparameter_no", example: "H", meaning: "Duplicate code for the parameter." },
+    { column: "stationparameter_longname", example: "River Stage", meaning: "The long description — the height of the water surface (e.g., in a river or canal)." },
+    { column: "ts_unitname", example: "meter", meaning: "The unit of the measurement." },
+    { column: "ts_unitsymbol", example: "m", meaning: "The symbol for the unit." },
+    { column: "parametertype_id", example: "560", meaning: "Internal ID of the parameter type in the database." },
+    { column: "parametertype_name", example: "H", meaning: "Name or code for the parameter type." },
+    { column: "ts_path", example: "Zelzate/kgt04a-1066/H/Cmd.Abs.Pv", meaning: "Hierarchical path describing the data source: Station → Code → Parameter → Time series." },
+    { column: "dataprovider", example: "MOW-HIC", meaning: "The organization providing the data. “MOW-HIC” stands for Flemish Ministry of Mobility and Public Works – Hydrologisch Informatiecentrum." }
   ];
 
   return (
-    <div >
+    /* The wrapper prevents the table from expanding the parent container */
+    <div style={styles.tableWrapper}>
       <table style={styles.table}>
         <thead>
           <tr style={styles.headerRow}>
-            <th style={styles.th}>Column</th>
-            <th style={styles.th}>Example Value</th>
-            <th style={styles.th}>Meaning / Explanation</th>
+            <th style={{...styles.th, width: '20%'}}>Column</th>
+            <th style={{...styles.th, width: '25%'}}>Example Value</th>
+            <th style={{...styles.th, width: '55%'}}>Meaning / Explanation</th>
           </tr>
         </thead>
         <tbody>
@@ -277,40 +198,50 @@ const AttributesTab = () => {
   );
 };
 
-// Simple inline styles for demonstration
 const styles = {
+tableWrapper: {
+    width: '100%',
+    maxHeight: '400px',
+    overflow: 'auto',
+    borderRadius: '4px',
+    border: '1px solid #ddd',
+    // ADD THIS LINE BELOW:
+    boxSizing: 'border-box', 
+  },
   table: {
     width: '100%',
-    borderCollapse: 'collapse',
-    border: '1px solid #ddd',
-    fontSize: '0.9rem',
+    borderCollapse: 'separate', // Better for rounded corners on wrappers
+    borderSpacing: 0,
+    fontSize: '0.85rem',
+    tableLayout: 'fixed', // Force columns to respect width percentages
+    backgroundColor: '#fff',
   },
   headerRow: {
     backgroundColor: '#f4f4f4',
-    borderBottom: '2px solid #ddd',
+    position: 'sticky', // Keeps header visible while scrolling
+    top: 0,
+    zIndex: 1,
   },
   th: {
-    padding: '12px 15px',
+    padding: '10px',
     textAlign: 'left',
     fontWeight: 'bold',
     color: '#333',
-    borderRight: '1px solid #ddd',
+    borderBottom: '2px solid #ddd',
+    borderRight: '1px solid #eee',
   },
   td: {
-    padding: '10px 15px',
-    borderBottom: '1px solid #ddd',
-    borderRight: '1px solid #ddd',
+    padding: '8px 10px',
+    borderBottom: '1px solid #eee',
+    borderRight: '1px solid #eee',
     verticalAlign: 'top',
+    wordWrap: 'break-word', // Ensures text wraps inside the cell
   },
   codeColumn: {
     fontFamily: 'monospace',
     fontWeight: '600',
-    color: '#d63384', // Slight color accent for the column name
+    color: '#d63384',
   },
-  evenRow: {
-    backgroundColor: '#ffffff',
-  },
-  oddRow: {
-    backgroundColor: '#f9f9f9',
-  }
+  evenRow: { backgroundColor: '#ffffff' },
+  oddRow: { backgroundColor: '#fcfcfc' }
 };
