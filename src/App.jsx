@@ -1,73 +1,98 @@
 import React, { useState } from 'react';
-import Navbar from './components/Navbar';
-import GraphCard from './components/GraphCard';
-import Footer from './components/Footer';
-import GraphLDES from './components/LDESgraphs/GraphLDES';
-import GrapLDESTSS from './components/LDESgraphs/GrapLDESTSS';
-// --- Components ---
-// --- Main Layout ---
+import { BodyCard } from './components/BodyCard';
+import { MapCardHead, MapCardBody } from './components/MapCard/MapCard';
 
-function App() {
-  // Simulating your future data list
+const App = () => {
+  // 1. Initialize state to track the active section
+  const [activeTab, setActiveTab] = useState('Oxigraph');
 
-const graphArrayLDES = [
-  { id: 1, title: "RiverDischarge1Year", url: 'http://localhost:3000/ldes/RiverDischarge1Year' },
-  { id: 2, title: "RiverStage1Year", url: 'http://localhost:3000/ldes/RiverStage1Year' },
-  //{ id: 3, title: "RiverDischarge1Year TSS", url: 'http://localhost:3000/ldestss/RiverDischarge1Year' }
-];
+  const navItems = ['Oxigraph', 'Virtuoso', 'Postgres', 'Benchmarks', 'Station Info', 'Live Data'];
 
-const graphArrayLDESTSS = [
-  { id: 1, title: "RiverDischarge1Year TSS", url: 'http://localhost:3000/ldestss/RiverDischarge1Year' },
-  { id: 2, title: "RiverStage1Year TSS", url: 'http://localhost:3000/ldestss/RiverStage1Year' },
 
-];
+
+  const styles = {
+    container: { display: 'flex', flexDirection: 'column', height: '100vh', margin: 0, fontFamily: "'Inter', sans-serif" },
+    mainContent: { display: 'flex', flex: '0 0 90%', width: '100%' },
+    navbar: { 
+      flex: '0 0 25%', 
+      backgroundColor: '#002353', 
+      color: 'white', 
+      padding: '2rem 1rem', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      gap: '1rem', 
+      boxSizing: 'border-box' 
+    },
+    body: { flexGrow: 1, backgroundColor: '#FFFFFF', padding: '2rem', overflowY: 'auto' },
+    footer: { 
+      flex: '0 0 10%', 
+      backgroundColor: '#2C3E50', 
+      color: '#BDC3C7', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center' 
+    },
+    navItem: (isActive) => ({
+      fontSize: '1.1rem',
+      fontWeight: '500',
+      cursor: 'pointer',
+      padding: '12px',
+      borderRadius: '4px',
+      transition: 'all 0.2s',
+      listStyle: 'none',
+      // Visual feedback: Highlight the active button
+      backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : 'transparent',
+      borderLeft: isActive ? '4px solid #3498db' : '4px solid transparent',
+    }),
+  };
+
+const renderBodyContent = () => {
+    switch (activeTab) {
+      case 'Postgres':
+        return (
+          <BodyCard Top={MapCardHead} Bottom={MapCardBody} />
+  );
+      default:
+        return <div>Select a database from the sidebar to view details.</div>;
+    }
+  };
+
 
   return (
-    // min-h-screen ensures footer hits bottom even if content is short
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <Navbar />
+    <div style={styles.container}>
+      <div style={styles.mainContent}>
+        <nav style={styles.navbar}>
+          <h2 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '1rem' }}>
+            Database Central
+          </h2>
+          <ul style={{ padding: 0, margin: 0 }}>
+            {navItems.map((item) => (
+              <li 
+                key={item} 
+                // 3. Update state on click
+                onClick={() => setActiveTab(item)}
+                style={styles.navItem(activeTab === item)} 
+                onMouseOver={(e) => { if(activeTab !== item) e.target.style.background = 'rgba(255,255,255,0.1)' }} 
+                onMouseOut={(e) => { if(activeTab !== item) e.target.style.background = 'transparent' }}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      {/* Main Content Area */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-          
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900">Analytics Overview</h1>
-            <p className="mt-2 text-slate-600">Monitor your key performance metrics in real-time.</p>
-          </div>
+        <main style={styles.body}>
+{renderBodyContent()}
+        </main>
+      </div>
 
-          {/* Responsive Grid Layout:
-             - grid-cols-1 (Mobile)
-             - md:grid-cols-2 (Tablet)
-             - lg:grid-cols-3 (Desktop)
-          */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-{graphArrayLDES.map((graph) => (
-  <GraphCard 
-    key={graph.id} 
-    title={graph.title} 
-    // Pass the component type and the url prop separately
-    GraphComponent={() => <GraphLDES URL={graph.url} />} 
-  />
-))}
-
-{graphArrayLDESTSS.map((graph) => (
-  <GraphCard 
-    key={graph.id} 
-    title={graph.title} 
-    // Pass the component type and the url prop separately
-    GraphComponent={() => <GrapLDESTSS URL={graph.url} />}
-  />
-))}
-          </div>
-
+      <footer style={styles.footer}>
+        <div style={{ textAlign: 'center' }}>
+          <p>&copy; 2026 Database Insights. Viewing: <strong>{activeTab}</strong></p>
         </div>
-      </main>
-
-      <Footer />
+      </footer>
     </div>
   );
-}
+};
 
 export default App;
