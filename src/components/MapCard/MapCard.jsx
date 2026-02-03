@@ -39,9 +39,6 @@ import React, { useState } from 'react';
       color: 'black',
     }
   };
-
-
-export const MapCardHead = () => {
   const headStyles = {
     title: {
       textAlign: 'center',        // Centers the H2
@@ -58,6 +55,9 @@ export const MapCardHead = () => {
       opacity: '0.95',            // Softens the white text slightly
     }
   };
+
+export const MapCardHead = () => {
+
 
   return (
     <div >
@@ -82,15 +82,15 @@ export const MapCardHead = () => {
 
 export const MapCardBody = () => {
   // 1. Local state for the sub-menu
-  const [activeSubTab, setActiveSubTab] = useState('Use Case');
+  const [activeSubTab, setActiveSubTab] = useState('UseCase');
   const menuItems = ['Usecase', 'Parameters', 'Attributes', 'Map'];
 const renderSubContent = () => {
     switch (activeSubTab) {
-      case 'Use Case':
-        return <div><h3>Overview Content Placeholder</h3></div>;
+      case 'UseCase':
+        return <UsecaseTab />;
       case 'Parameters':
         return <div><h3>Overview Content Placeholder</h3></div>;
-      case 'Data Attributes':
+      case 'Attributes':
         return <div><h3>Overview Content Placeholder</h3></div>;
       case 'Map':
         return <div><h3>Overview Content Placeholder</h3></div>;
@@ -126,3 +126,12 @@ const renderSubContent = () => {
 };
 
 
+const UsecaseTab = () => (
+<div>
+        <p style={headStyles.description}>
+        For a water data scientist, this integrated dataset enables a complete monitoring and forecasting workflow. By aligning the stage and discharge data from the same location, the scientist can detect abnormal relationships — for example, sudden increases in water level without corresponding discharge changes, which might indicate a sluice malfunction or obstruction. The dataset also supports short-term forecasting of stage and flow, crucial for navigation safety, sluice operation scheduling, and flood risk management. Using statistical or machine learning models, future water levels and discharges can be predicted up to 72 hours. This helps operators anticipate peak flows, low-water conditions, or abrupt level changes that could affect shipping or infrastructure.
+      </p>
+              <p style={headStyles.description}>
+Through this integration, the Mol Sluis dataset becomes more than a collection of raw measurements — it becomes an operational intelligence layer for canal management. It supports proactive decision-making by enabling early anomaly detection, improved calibration of hydraulic models, and automated alerts for critical thresholds. Ultimately, this unified dataset empowers the water data scientist to deliver insights that improve safety, efficiency, and resilience in the canal’s daily operations.      </p>
+  </div>
+);
