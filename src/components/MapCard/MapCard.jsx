@@ -83,7 +83,7 @@ export const MapCardHead = () => {
 export const MapCardBody = () => {
   // 1. Local state for the sub-menu
   const [activeSubTab, setActiveSubTab] = useState('UseCase');
-  const menuItems = ['Usecase', 'Parameters', 'Attributes', 'Map'];
+  const menuItems = ['UseCase', 'Parameters', 'Attributes', 'Map'];
 const renderSubContent = () => {
     switch (activeSubTab) {
       case 'UseCase':
