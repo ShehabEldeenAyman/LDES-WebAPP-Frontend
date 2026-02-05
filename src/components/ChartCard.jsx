@@ -16,30 +16,28 @@ export const ChartCardBody = ({ charts = [], placeholder = "No charts available"
         container: {
             display: 'grid',
             gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '1rem',
-            height: '100%',
+            gap: '1.5rem',
             width: '100%',
             boxSizing: 'border-box',
             padding: '0.5rem'
         },
         chartItem: {
-            backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-            borderRadius: '8px',
-            border: '1px dashed rgba(255, 255, 255, 0.2)',
+            backgroundColor: '#ffffff', // Solid background so they look like distinct cards
+            borderRadius: '12px',
+            border: '1px solid #e0e0e0',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '200px', 
-            color: '#666',
-            boxSizing: 'border-box'
+            flexDirection: 'column',
+            padding: '1rem',
+            boxSizing: 'border-box',
+            minHeight: '450px', // Ensures buttons have enough room to exist
+            boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
         }
     };
 
-    // If charts array is empty, show the placeholder in a single grid cell
     if (charts.length === 0) {
         return (
             <div style={gridStyles.container}>
-                <div style={{ ...gridStyles.chartItem, gridColumn: 'span 2' }}>
+                <div style={{ ...gridStyles.chartItem, gridColumn: 'span 2', minHeight: '200px' }}>
                     <p style={{ fontStyle: 'italic' }}>{placeholder}</p>
                 </div>
             </div>
@@ -48,9 +46,9 @@ export const ChartCardBody = ({ charts = [], placeholder = "No charts available"
 
     return (
         <div style={gridStyles.container}>
-            {charts.map((content, index) => (
+            {charts.map((chart, index) => (
                 <div key={index} style={gridStyles.chartItem}>
-                    {content}
+                    {chart}
                 </div>
             ))}
         </div>

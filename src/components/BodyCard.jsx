@@ -1,13 +1,24 @@
-export const BodyCard = ({Top,Bottom}) => (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1em', height: '100%' ,backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '1em' }}>
-            <div style={{height: '30%', borderRadius: '1em'}}> 
-            <Top />
-            </div>
-            <div style={{height: '70%', borderRadius: '1em'}}> 
-            <Bottom />
-            </div>
-          {/* <Top />
-          <Bottom /> */}
-
-          </div>
+export const BodyCard = ({ Top, Bottom }) => (
+  <div style={{ 
+    display: 'flex', 
+    flexDirection: 'column', 
+    height: '100%', 
+    backgroundColor: '#f9f9f9', 
+    padding: '20px', 
+    borderRadius: '1em',
+    boxSizing: 'border-box',
+    overflow: 'hidden' // Prevents the whole card from growing/scrolling
+  }}>
+    <div style={{ flex: '0 0 auto', marginBottom: '10px' }}> 
+      <Top />
+    </div>
+    
+    <div style={{ 
+      flex: '1 1 auto', // Takes up all remaining space
+      overflowY: 'auto', // This makes ONLY the chart area scrollable
+      borderRadius: '1em'
+    }}> 
+      <Bottom />
+    </div>
+  </div>
 );

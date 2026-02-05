@@ -6,6 +6,7 @@ import { ChartCardHead,ChartCardBody } from './components/ChartCard';
 import { LDESChart } from './components/ChartComponents/LDESChart';
 import { LDESTSSChart } from './components/ChartComponents/LDESTSSChart';
 import { TTLChart } from './components/ChartComponents/TTLChart';
+import { SQLChart } from './components/ChartComponents/SQLChart';
 
 const App = () => {
   // 1. Initialize state to track the active section
@@ -28,7 +29,14 @@ const App = () => {
       gap: '1rem', 
       boxSizing: 'border-box' 
     },
-    body: { flexGrow: 1, backgroundColor: '#FFFFFF', padding: '2rem', overflowY: 'auto' },
+    body: { 
+      flexGrow: 1, 
+      backgroundColor: '#FFFFFF', 
+      padding: '2rem', 
+      overflow: 'hidden', // The scroll happens inside BodyCard now
+      height: '100vh',
+      boxSizing: 'border-box'
+    },
     footer: { 
       flex: '0 0 10%', 
       backgroundColor: '#2C3E50', 
@@ -147,6 +155,29 @@ const renderBodyContent = () => {
             )} 
           />
         );
+      case 'SQL':
+          return (
+          <BodyCard 
+            Top={() => <ChartCardHead title="LDES Charts" />} 
+            Bottom={() => (
+              <ChartCardBody 
+                charts={[
+                  <SQLChart
+                    URL="http://localhost:3000/postgres/RiverStage1Year"
+                    title="River Stage - SQL/Postgres"
+                  />,
+                    <SQLChart
+                    URL="http://localhost:3000/postgres/RiverDischarge1Year"
+                    title="River Discharge - SQL/Postgres"
+                  />,
+
+              ]} // place multiple charts here
+                placeholder="Awaiting Real-Time Streamflow Data for Mol Sluis..." 
+              />
+            )} 
+          />
+        );
+
       default:
         return <div>Coming Soon...</div>;
     }
