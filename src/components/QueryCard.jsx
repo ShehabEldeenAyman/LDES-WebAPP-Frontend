@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const innerStyles = {
   container: {
@@ -77,29 +77,58 @@ const innerStyles = {
 };
 
 export const QueryCard = () => {
-  const [dbType, setDbType] = useState('TTL');
-  const [query, setQuery] = useState('SELECT * WHERE { ?s ?p ?o } LIMIT 100');
+  const [dbType, setDbType] = useState('LDES'); 
+  const [query, setQuery] = useState('SELECT * WHERE { ?s ?p ?o }');
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const limit = 100;
+  const limit = 100; 
 
   const handleExecute = async (targetPage = 1) => {
     setLoading(true);
     setPage(targetPage);
     
-    // Construct URL based on selection (example endpoint provided in prompt)
-    // Note: In a real app, you'd likely POST the 'query' string to the backend
-    const url = `http://localhost:3000/oxigraph/ttl/RiverStage1Year?page=${targetPage}&limit=${limit}`;
+    // 1. Explicitly select the Base URL as requested
+    let baseUrl = '';
+    switch (dbType) {
+      case 'LDES':
+        baseUrl = 'http://localhost:3000/virtuoso/ldes';
+        break;
+      case 'LDESTSS':
+        baseUrl = 'http://localhost:3000/virtuoso/ldestss';
+        break;
+      case 'TTL':
+        baseUrl = 'http://localhost:3000/virtuoso/ttl';
+        break;
+      default:
+        baseUrl = 'http://localhost:3000/virtuoso/ldes';
+    }
+
+    // 2. Append the /query endpoint
+    const queryEndpoint = `${baseUrl}/query`;
+
+    // 3. Encode the query string 
+    const encodedQuery = encodeURIComponent(query);
+
+    // 4. Assemble the final URL with pagination
+    const finalUrl = `${queryEndpoint}?query=${encodedQuery}&page=${targetPage}`;
     
+    console.log("Fetching:", finalUrl);
+
     try {
-      const response = await fetch(url);
+      const response = await fetch(finalUrl);
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
       const data = await response.json();
       setResults(data);
     } catch (error) {
       console.error("Query failed:", error);
       alert("Failed to fetch data. Check console for details.");
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -108,6 +137,7 @@ export const QueryCard = () => {
   return (
     <div style={innerStyles.container}>
       <div style={innerStyles.controls}>
+        <label><strong>Database Type: </strong></label>
         <select 
           style={innerStyles.select} 
           value={dbType} 
@@ -120,7 +150,7 @@ export const QueryCard = () => {
         
         <button 
           style={innerStyles.executeBtn} 
-          onClick={() => handleExecute(1)}
+          onClick={() => handleExecute(1)} 
           disabled={loading}
         >
           {loading ? 'Running...' : 'EXECUTE'}
@@ -131,7 +161,7 @@ export const QueryCard = () => {
         style={innerStyles.textarea}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Enter your SPARQL or SQL query here..."
+        placeholder="Enter your SPARQL query here..."
       />
 
       <div style={innerStyles.tableWrapper}>
@@ -139,8 +169,8 @@ export const QueryCard = () => {
           <thead>
             <tr>
               <th style={innerStyles.th}>Subject</th>
-              <th style={innerStyles.th}>Predicate</th>
-              <th style={innerStyles.th}>Object</th>
+              <th style={innerStyles.th}>Value / Predicate</th>
+              <th style={innerStyles.th}>Time / Object</th>
               <th style={innerStyles.th}>Runoff</th>
             </tr>
           </thead>
@@ -148,14 +178,16 @@ export const QueryCard = () => {
             {results.map((row, index) => (
               <tr key={index}>
                 <td style={innerStyles.td}>{row.subject}</td>
-                <td style={innerStyles.td}>{row.value}</td>
-                <td style={innerStyles.td}>{row.time}</td>
-                <td style={innerStyles.td}>{row.runoffValue ?? 'N/A'}</td>
+                <td style={innerStyles.td}>{row.value || row.from}</td>
+                <td style={innerStyles.td}>{row.time || row.pointType}</td>
+                <td style={innerStyles.td}>{row.runoffValue ?? '-'}</td>
               </tr>
             ))}
             {results.length === 0 && !loading && (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>No results found. Execute a query to see data.</td>
+                <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>
+                  No results found.
+                </td>
               </tr>
             )}
           </tbody>
