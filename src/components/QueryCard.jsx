@@ -101,8 +101,8 @@ export const QueryCard = () => {
       case 'TTL':
         baseUrl = 'http://localhost:3000/virtuoso/ttl';
         break;
-      default:
-        baseUrl = 'http://localhost:3000/virtuoso/ldes';
+    //   default:
+    //     baseUrl = 'http://localhost:3000/';
     }
 
     // 2. Append the /query endpoint
