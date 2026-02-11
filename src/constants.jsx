@@ -1,1 +1,1 @@
-export const backend_server_address = "https://chatty-boats-sink.loca.lt"
+export const backend_server_address = "https://ed-pretelephone-unpleasantly.ngrok-free.dev/"
