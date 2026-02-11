@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {backend_server_address} from './constants'
+import {backend_server_address} from '../constants'
 
 const innerStyles = {
   container: {
