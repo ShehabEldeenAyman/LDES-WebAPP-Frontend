@@ -56,7 +56,8 @@ const innerStyles = {
     backgroundColor: '#f4f4f4',
     padding: '10px',
     textAlign: 'left',
-    borderBottom: '2px solid #ddd'
+    borderBottom: '2px solid #ddd',
+    textTransform: 'capitalize' // Makes variable names look cleaner
   },
   td: {
     padding: '10px',
@@ -78,7 +79,7 @@ const innerStyles = {
 
 export const QueryCard = () => {
   const [dbType, setDbType] = useState('LDES'); 
-  const [query, setQuery] = useState('SELECT * WHERE { ?s ?p ?o }');
+  const [query, setQuery] = useState('SELECT * WHERE { ?s ?p ?o } LIMIT 100');
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -89,7 +90,6 @@ export const QueryCard = () => {
     setLoading(true);
     setPage(targetPage);
     
-    // 1. Explicitly select the Base URL as requested
     let baseUrl = '';
     switch (dbType) {
       case 'LDES':
@@ -101,38 +101,28 @@ export const QueryCard = () => {
       case 'TTL':
         baseUrl = 'http://localhost:3000/virtuoso/ttl';
         break;
-    //   default:
-    //     baseUrl = 'http://localhost:3000/';
+      default:
+        baseUrl = 'http://localhost:3000/virtuoso/ttl';
     }
 
-    // 2. Append the /query endpoint
-    const queryEndpoint = `${baseUrl}/query`;
-
-    // 3. Encode the query string 
     const encodedQuery = encodeURIComponent(query);
-
-    // 4. Assemble the final URL with pagination
-    const finalUrl = `${queryEndpoint}?query=${encodedQuery}&page=${targetPage}`;
+    const finalUrl = `${baseUrl}/query?query=${encodedQuery}&page=${targetPage}`;
     
-    console.log("Fetching:", finalUrl);
-
     try {
       const response = await fetch(finalUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`Server error: ${response.status}`);
       const data = await response.json();
-      setResults(data);
+      setResults(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Query failed:", error);
-      alert("Failed to fetch data. Check console for details.");
       setResults([]);
     } finally {
       setLoading(false);
     }
   };
+
+  // HIGHLIGHTED CHANGE: Determine columns dynamically from the result keys
+  const columns = results.length > 0 ? Object.keys(results[0]) : [];
 
   return (
     <div style={innerStyles.container}>
@@ -168,25 +158,30 @@ export const QueryCard = () => {
         <table style={innerStyles.table}>
           <thead>
             <tr>
-              <th style={innerStyles.th}>Subject</th>
-              <th style={innerStyles.th}>Value / Predicate</th>
-              <th style={innerStyles.th}>Time / Object</th>
-              <th style={innerStyles.th}>Runoff</th>
+              {/* Generate headers dynamically */}
+              {columns.map((col) => (
+                <th key={col} style={innerStyles.th}>{col}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {results.map((row, index) => (
-              <tr key={index}>
-                <td style={innerStyles.td}>{row.subject}</td>
-                <td style={innerStyles.td}>{row.value || row.from}</td>
-                <td style={innerStyles.td}>{row.time || row.pointType}</td>
-                <td style={innerStyles.td}>{row.runoffValue ?? '-'}</td>
-              </tr>
-            ))}
-            {results.length === 0 && !loading && (
+            {results.length > 0 ? (
+              results.map((row, index) => (
+                <tr key={index}>
+                  {/* Generate cells dynamically based on detected keys */}
+                  {columns.map((col) => (
+                    <td key={`${index}-${col}`} style={innerStyles.td}>
+                      {typeof row[col] === 'object' && row[col] !== null 
+                        ? JSON.stringify(row[col]) 
+                        : (row[col]?.toString() || '-')}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan="4" style={{ textAlign: 'center', padding: '20px' }}>
-                  No results found.
+                <td colSpan={columns.length || 1} style={{ textAlign: 'center', padding: '20px' }}>
+                  {loading ? 'Loading...' : 'No results found.'}
                 </td>
               </tr>
             )}
@@ -198,7 +193,7 @@ export const QueryCard = () => {
         <button 
           disabled={page <= 1 || loading} 
           onClick={() => handleExecute(page - 1)}
-          style={innerStyles.pageBtn}
+          style={{...innerStyles.pageBtn, opacity: (page <= 1 || loading) ? 0.5 : 1}}
         >
           Previous
         </button>
@@ -206,7 +201,7 @@ export const QueryCard = () => {
         <button 
           disabled={results.length < limit || loading} 
           onClick={() => handleExecute(page + 1)}
-          style={innerStyles.pageBtn}
+          style={{...innerStyles.pageBtn, opacity: (results.length < limit || loading) ? 0.5 : 1}}
         >
           Next
         </button>
