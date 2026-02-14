@@ -9,6 +9,9 @@ import { TTLChart } from './components/ChartComponents/TTLChart';
 import { SQLChart } from './components/ChartComponents/SQLChart';
 import { QueryCard } from './components/QueryCard';
 import { BrowseDataHead,BrowseDataBody } from './components/BrowseData';
+import { LDESClientCard } from './components/LDESClientCard';
+
+
 
 const App = () => {
   // 1. Initialize state to track the active section
@@ -205,7 +208,10 @@ const renderBodyContent = () => {
         
             case 'LDES Client':
         return (
-          <div>coming soon</div>
+
+          <BodyCard
+          Top={() => <ChartCardHead title="LDES Client Test"/>}
+          Bottom={LDESClientCard} />
         );
 
       default:
