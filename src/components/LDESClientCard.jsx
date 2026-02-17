@@ -14,13 +14,10 @@ export function LDESClientCard() {
       setStatus("Fetching...");
       
       try {
-        const ldesClient = replicateLDES("https://shehabeldeenayman.github.io/Mol_sluis_Dessel_Usecase/LDES/LDES.trig", {
-          //fetchOptions: { redirect: "follow" },
-          materialize: true,
-          // Ensure these are valid Date objects or omitted if not needed
-          //fromTime: new Date("2025-01-01T00:00:00Z"),
-          //untilTime: new Date("2026-01-01T00:00:00Z"),
-        });
+        const ldesClient = replicateLDES({
+      url: data_url_LDES,
+      fetchOptions: { redirect: "follow" }
+    });
 
         // Get the stream reader
         const reader = ldesClient.stream().getReader();
