@@ -57,7 +57,7 @@ const innerStyles = {
     padding: '10px',
     textAlign: 'left',
     borderBottom: '2px solid #ddd',
-    textTransform: 'capitalize' // Makes variable names look cleaner
+    textTransform: 'capitalize'
   },
   td: {
     padding: '10px',
@@ -77,14 +77,43 @@ const innerStyles = {
   }
 };
 
+// Map of default queries for each DB type
+const queryTemplates = {
+  'LDES': `PREFIX sosa: <http://www.w3.org/ns/sosa/>\nSELECT ?subject ?value ?time\nWHERE {\n  ?subject sosa:hasSimpleResult ?value ;\n           sosa:resultTime ?time .\n}\nLIMIT 100`,
+  
+  'LDESTSS': `SELECT ?subject ?from ?pointType ?points\nWHERE {\n  ?subject <http://example.org/from> ?from ;\n           <http://example.org/pointType> ?pointType ;\n           <http://example.org/points> ?points .\n}\nLIMIT 100`,
+  
+  'TTL': `PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX ex: <http://example.org/>
+SELECT ?subject ?value ?time ?runoffvalue ?observedproperty
+WHERE {
+  ?subject sosa:hasSimpleResult ?value ;
+           sosa:resultTime ?time;
+           sosa:observedProperty ?observedproperty .
+           
+  OPTIONAL { 
+    ?subject ex:hasRunoff ?runoffvalue 
+  }
+}
+ORDER BY DESC(?time)`
+};
+
 export const QueryCard = () => {
   const [dbType, setDbType] = useState('LDES'); 
-  const [query, setQuery] = useState('SELECT * WHERE { ?s ?p ?o } LIMIT 100');
+  // Initialize with the LDES template
+  const [query, setQuery] = useState(queryTemplates['LDES']);
   const [results, setResults] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const limit = 100; 
+
+  // Handle dropdown change: Update DB type AND the query text
+  const handleDbTypeChange = (e) => {
+    const selectedType = e.target.value;
+    setDbType(selectedType);
+    setQuery(queryTemplates[selectedType]);
+  };
 
   const handleExecute = async (targetPage = 1) => {
     setLoading(true);
@@ -92,17 +121,10 @@ export const QueryCard = () => {
     
     let baseUrl = '';
     switch (dbType) {
-      case 'LDES':
-        baseUrl = 'http://localhost:3000/virtuoso/ldes';
-        break;
-      case 'LDESTSS':
-        baseUrl = 'http://localhost:3000/virtuoso/ldestss';
-        break;
-      case 'TTL':
-        baseUrl = 'http://localhost:3000/virtuoso/ttl';
-        break;
-      default:
-        baseUrl = 'http://localhost:3000/virtuoso/ttl';
+      case 'LDES': baseUrl = 'http://localhost:3000/virtuoso/ldes'; break;
+      case 'LDESTSS': baseUrl = 'http://localhost:3000/virtuoso/ldestss'; break;
+      case 'TTL': baseUrl = 'http://localhost:3000/virtuoso/ttl'; break;
+      default: baseUrl = 'http://localhost:3000/virtuoso/ttl';
     }
 
     const encodedQuery = encodeURIComponent(query);
@@ -121,7 +143,6 @@ export const QueryCard = () => {
     }
   };
 
-  // HIGHLIGHTED CHANGE: Determine columns dynamically from the result keys
   const columns = results.length > 0 ? Object.keys(results[0]) : [];
 
   return (
@@ -131,7 +152,7 @@ export const QueryCard = () => {
         <select 
           style={innerStyles.select} 
           value={dbType} 
-          onChange={(e) => setDbType(e.target.value)}
+          onChange={handleDbTypeChange}
         >
           <option value="LDES">LDES</option>
           <option value="LDESTSS">LDESTSS</option>
@@ -158,7 +179,6 @@ export const QueryCard = () => {
         <table style={innerStyles.table}>
           <thead>
             <tr>
-              {/* Generate headers dynamically */}
               {columns.map((col) => (
                 <th key={col} style={innerStyles.th}>{col}</th>
               ))}
@@ -168,7 +188,6 @@ export const QueryCard = () => {
             {results.length > 0 ? (
               results.map((row, index) => (
                 <tr key={index}>
-                  {/* Generate cells dynamically based on detected keys */}
                   {columns.map((col) => (
                     <td key={`${index}-${col}`} style={innerStyles.td}>
                       {typeof row[col] === 'object' && row[col] !== null 
