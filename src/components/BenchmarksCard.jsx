@@ -70,7 +70,7 @@ export const BenchmarksCardBody = ({url,title}) => {
       },
       yAxis: {
         type: 'value',
-        name: 'Time (ms)',
+        name: 'Time (s)',
       },
       series: [
         {
