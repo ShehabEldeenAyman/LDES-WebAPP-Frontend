@@ -10,7 +10,7 @@ import { SQLChart } from './components/ChartComponents/SQLChart';
 import { QueryCard } from './components/QueryCard';
 import { BrowseDataHead,BrowseDataBody } from './components/BrowseData';
 import { LDESClientCard } from './components/LDESClientCard';
-
+import { base_url } from './constants';
 
 
 const App = () => {
@@ -73,9 +73,9 @@ const renderBodyContent = () => {
       case 'Benchmarks':
         return <BodyCard Top={BenchmarksCardHead} Bottom={() => (<ChartCardBody 
                 charts={[
-                <BenchmarksCardBody url="http://localhost:3000/ingestbenchmarks" title="Ingest Benchmarks" />,
-                <BenchmarksCardBody url="http://localhost:3000/recallbenchmarks" title="Recall Benchmarks" />,
-                // <BenchmarksCardBody url="http://localhost:3000/objectcountbenchmarks" title="Object Count Benchmarks" />
+                <BenchmarksCardBody url={`${base_url}ingestbenchmarks`} title="Ingest Benchmarks" />,
+                <BenchmarksCardBody url={`${base_url}recallbenchmarks`} title="Recall Benchmarks" />,
+                // <BenchmarksCardBody url={`${base_url}objectcountbenchmarks`} title="Object Count Benchmarks" />
 
 
               ]} // place multiple charts here
@@ -89,19 +89,19 @@ const renderBodyContent = () => {
               <ChartCardBody 
                 charts={[
                 <LDESChart 
-                URL="http://localhost:3000/virtuoso/ldes/RiverStage1Year"
+                URL={`${base_url}virtuoso/ldes/RiverStage1Year`}
                 title="River Stage - Virtuoso"
                 />,
                   <LDESChart
-                URL="http://localhost:3000/virtuoso/ldes/RiverDischarge1Year"
+                URL={`${base_url}virtuoso/ldes/RiverDischarge1Year`}
                 title="River Discharge - Virtuoso"
                 />,
                 <LDESChart
-                URL="http://localhost:3000/oxigraph/ldes/RiverStage1Year"
+                URL={`${base_url}oxigraph/ldes/RiverStage1Year`}
                 title="River Stage - Oxigraph"
                 />,
                 <LDESChart
-                URL="http://localhost:3000/oxigraph/ldes/RiverDischarge1Year"
+                URL={`${base_url}oxigraph/ldes/RiverDischarge1Year`}
                 title="River Discharge - Oxigraph"
                 />,
               ]} // place multiple charts here
@@ -118,19 +118,19 @@ const renderBodyContent = () => {
               <ChartCardBody 
                 charts={[
                 <LDESTSSChart 
-                URL="http://localhost:3000/virtuoso/ldestss/RiverStage1Year"
+                URL={`${base_url}virtuoso/ldestss/RiverStage1Year`}
                 title="River Stage - Virtuoso"
                 />,
                 <LDESTSSChart 
-                URL="http://localhost:3000/virtuoso/ldestss/RiverDischarge1Year"
+                URL={`${base_url}virtuoso/ldestss/RiverDischarge1Year`}
                 title="River Discharge - Virtuoso"
                 />,
                 <LDESTSSChart 
-                URL="http://localhost:3000/oxigraph/ldestss/RiverStage1Year"
+                URL={`${base_url}oxigraph/ldestss/RiverStage1Year`}
                 title="River Stage - Oxigraph"
                 />,
                 <LDESTSSChart 
-                URL="http://localhost:3000/oxigraph/ldestss/RiverDischarge1Year"
+                URL={`${base_url}oxigraph/ldestss/RiverDischarge1Year`}
                 title="River Discharge - Oxigraph"
                 />,
               ]} // place multiple charts here
@@ -147,19 +147,19 @@ const renderBodyContent = () => {
               <ChartCardBody 
                 charts={[
                 <TTLChart 
-                URL="http://localhost:3000/virtuoso/ttl/RiverStage1Year"
+                URL={`${base_url}virtuoso/ttl/RiverStage1Year`}
                 title="River Stage - Virtuoso"
                 />,
                                 <TTLChart 
-                URL="http://localhost:3000/virtuoso/ttl/RiverDischarge1Year"
+                URL={`${base_url}virtuoso/ttl/RiverDischarge1Year`}
                 title="River Discharge - Virtuoso"
                 />,
                                 <TTLChart 
-                URL="http://localhost:3000/oxigraph/ttl/RiverStage1Year"
+                URL={`${base_url}oxigraph/ttl/RiverStage1Year`}
                 title="River Stage - Oxigraph"
                 />,
                                 <TTLChart 
-                URL="http://localhost:3000/oxigraph/ttl/RiverDischarge1Year"
+                URL={`${base_url}oxigraph/ttl/RiverDischarge1Year`}
                 title="River Discharge - Oxigraph"
                 />,
 
@@ -177,11 +177,11 @@ const renderBodyContent = () => {
               <ChartCardBody 
                 charts={[
                   <SQLChart
-                    URL="http://localhost:3000/postgres/RiverStage1Year"
+                    URL={`${base_url}postgres/RiverStage1Year`}
                     title="River Stage - SQL/Postgres"
                   />,
                     <SQLChart
-                    URL="http://localhost:3000/postgres/RiverDischarge1Year"
+                    URL={`${base_url}postgres/RiverDischarge1Year`}
                     title="River Discharge - SQL/Postgres"
                   />,
 

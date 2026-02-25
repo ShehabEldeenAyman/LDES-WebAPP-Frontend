@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { base_url } from '../constants';
 
 const innerStyles = {
   container: {
@@ -150,7 +151,7 @@ ORDER BY DESC(?time)`;
     setLoading(true);
     try {
       const encodedQuery = encodeURIComponent(sparqlQuery);
-      const response = await fetch(`http://localhost:3000/virtuoso/ttl/query?page=${page}&query=${encodedQuery}`);
+      const response = await fetch(`${base_url}virtuoso/ttl/query?page=${page}&query=${encodedQuery}`);
       const result = await response.json();
       setData(Array.isArray(result) ? result : (result.results?.bindings || []));
     } catch (error) {
