@@ -11,6 +11,7 @@ import { QueryCard } from './components/QueryCard';
 import { BrowseDataHead,BrowseDataBody } from './components/BrowseData';
 import { LDESClientCard } from './components/LDESClientCard';
 import { base_url } from './constants';
+import { MasterChart } from './components/ChartComponents/MasterChart';
 
 
 const App = () => {

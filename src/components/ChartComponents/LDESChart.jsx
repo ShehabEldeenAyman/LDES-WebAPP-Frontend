@@ -7,11 +7,13 @@ export const LDESChart = ({URL,title}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
+  // New state to track if the very first load has been triggered
+  const [hasStarted, setHasStarted] = useState(false); 
   const limit = 100;
 
-  // The Fetch function now APPENDS data to the existing state
   const fetchData = async (targetPage) => {
     setLoading(true);
+    setHasStarted(true); // Mark that we have started interacting with the data
     try {
       const response = await fetch(`${URL}?page=${targetPage}&limit=${limit}`);
       if (!response.ok) throw new Error('Network response was not ok');
@@ -23,10 +25,7 @@ export const LDESChart = ({URL,title}) => {
       }
 
       setData(prevData => {
-        // Merge new data with previous data
         const combined = [...prevData, ...json];
-        
-        // Sort by time ascending to ensure the line chart draws correctly from left to right
         return combined.sort((a, b) => new Date(a.time) - new Date(b.time));
       });
       
@@ -38,15 +37,17 @@ export const LDESChart = ({URL,title}) => {
     }
   };
 
-  // Initial load
-  useEffect(() => {
-    fetchData(1);
-  }, []);
+  // REMOVED: The useEffect that previously called fetchData(1) on mount
 
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
     fetchData(nextPage);
+  };
+
+  const startInitialLoad = () => {
+    setPage(1);
+    fetchData(1);
   };
 
   const getOption = () => {
@@ -73,10 +74,9 @@ export const LDESChart = ({URL,title}) => {
         bottom: '15%',
         containLabel: true
       },
-      // DataZoom allows the user to navigate the cumulative dataset
       dataZoom: [
         {
-          type: 'slider', // The bar at the bottom
+          type: 'slider',
           start: 0,
           end: 100,
           handleSize: '80%',
@@ -89,7 +89,7 @@ export const LDESChart = ({URL,title}) => {
           }
         },
         {
-          type: 'inside' // Allows mouse-wheel zooming
+          type: 'inside'
         }
       ],
       xAxis: {
@@ -101,7 +101,7 @@ export const LDESChart = ({URL,title}) => {
       yAxis: {
         type: 'value',
         name: 'Stage (m)',
-        scale: true, // Focuses the zoom on the data range (e.g., 29m - 30m)
+        scale: true,
         splitLine: { show: true, lineStyle: { type: 'dashed' } }
       },
       series: [
@@ -109,8 +109,8 @@ export const LDESChart = ({URL,title}) => {
           name: 'River Stage',
           type: 'line',
           symbol: 'none',
-          sampling: 'lttb', // "Largest-Triangle-Three-Buckets" - keeps visual shape while optimizing points
-          large: true,      // Enables ECharts optimization for high-volume data
+          sampling: 'lttb',
+          large: true,
           itemStyle: { color: '#1523e0' },
           areaStyle: {
             color: {
@@ -130,38 +130,50 @@ export const LDESChart = ({URL,title}) => {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: '8px', padding: '10px', boxSizing: 'border-box' }}>
       
-      {/* Error Message */}
       {error && <div style={{ color: '#721c24', backgroundColor: '#f8d7da', padding: '10px', borderRadius: '4px', marginBottom: '10px' }}>{error}</div>}
       
-      {/* Chart Container */}
-      <div style={{ flexGrow: 1, minHeight: '350px' }}>
+      <div style={{ flexGrow: 1, minHeight: '350px', position: 'relative' }}>
+        {/* Placeholder UI when no data is loaded yet */}
+        {!hasStarted && !loading && (
+          <div style={overlayStyle}>
+            <p>Data is not loaded yet.</p>
+            <button onClick={startInitialLoad} style={buttonStyle}>Click to Load Data</button>
+          </div>
+        )}
+        
         <ReactECharts 
           option={getOption()} 
           style={{ height: '100%', width: '100%' }} 
-          notMerge={true} // Ensures the chart updates cleanly when data is appended
+          notMerge={true} 
         />
       </div>
 
-      {/* Controls Area */}
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
         <div style={{ fontSize: '0.9rem', color: '#666' }}>
             Showing <strong>{data.length}</strong> observations
         </div>
         
-        <button 
-          onClick={loadMore} 
-          disabled={loading || !hasMore}
-          style={{
-            ...buttonStyle,
-            opacity: (loading || !hasMore) ? 0.5 : 1,
-            cursor: (loading || !hasMore) ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {loading ? 'Fetching...' : hasMore ? 'Load Next 100 Points' : 'End of Records'}
-        </button>
+        {hasStarted ? (
+          <button 
+            onClick={loadMore} 
+            disabled={loading || !hasMore}
+            style={{
+              ...buttonStyle,
+              opacity: (loading || !hasMore) ? 0.5 : 1,
+              cursor: (loading || !hasMore) ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? 'Fetching...' : hasMore ? 'Load Next 100 Points' : 'End of Records'}
+          </button>
+        ) : (
+          <button onClick={startInitialLoad} disabled={loading} style={buttonStyle}>
+            {loading ? 'Fetching...' : 'Initial Load'}
+          </button>
+        )
+        }
 
         <button 
-          onClick={() => { setData([]); setPage(1); setHasMore(true); fetchData(1); }}
+          onClick={() => { setData([]); setPage(1); setHasMore(true); setHasStarted(false); }}
           style={{ ...buttonStyle, backgroundColor: '#6c757d' }}
         >
           Reset
@@ -169,6 +181,20 @@ export const LDESChart = ({URL,title}) => {
       </div>
     </div>
   );
+};
+
+const overlayStyle = {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(255,255,255,0.8)',
+  zIndex: 10,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center'
 };
 
 const buttonStyle = {
@@ -180,4 +206,3 @@ const buttonStyle = {
   fontWeight: '600',
   transition: 'background 0.2s'
 };
-
