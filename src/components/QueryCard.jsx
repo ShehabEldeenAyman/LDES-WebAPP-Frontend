@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { name_GRAPH_LDES, name_GRAPH_LDESTSS, name_GRAPH_TTL } from '../constants';
 
 const innerStyles = {
   container: {
@@ -79,23 +80,71 @@ const innerStyles = {
 
 // Map of default queries for each DB type
 const queryTemplates = {
-  'LDES': `PREFIX sosa: <http://www.w3.org/ns/sosa/>\nSELECT ?subject ?value ?time\nWHERE {\n  ?subject sosa:hasSimpleResult ?value ;\n           sosa:resultTime ?time .\n}\nLIMIT 100`,
+  'LDES': `
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX ex: <http://example.com/ns#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?subject ?value ?time ?runoffvalue ?observedproperty
+WHERE {
+  GRAPH <http://example.com/graph/ldes> {
+    ?subject sosa:observedProperty ?observedproperty ;
+             sosa:hasSimpleResult ?value ;
+             sosa:resultTime ?time .
+    
+    OPTIONAL { ?subject ex:hasRunoff ?runoffvalue . }
+    
+    FILTER (?time >= "2025-01-01T00:00:00"^^xsd:dateTime && 
+            ?time < "2026-01-01T00:00:00"^^xsd:dateTime)
+  }
+}
+ORDER BY DESC(?time)
+    `,
   
-  'LDESTSS': `SELECT ?subject ?from ?pointType ?points\nWHERE {\n  ?subject <http://example.org/from> ?from ;\n           <http://example.org/pointType> ?pointType ;\n           <http://example.org/points> ?points .\n}\nLIMIT 100`,
+  'LDESTSS': `
+PREFIX tss: <https://w3id.org/tss#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?subject ?from ?pointType ?madeBySensor ?points ?observedproperty
+WHERE {
+  GRAPH <${name_GRAPH_LDESTSS}> {
+    ?subject a tss:Snippet ;
+             tss:from ?from ;
+             tss:pointType ?pointType ;
+             tss:points ?points ;
+             tss:about ?template .
+    
+    ?template sosa:madeBySensor ?madeBySensor ;
+              sosa:observedProperty ?observedproperty .
+    
+    FILTER (?from >= "2025-01-01T00:00:00"^^xsd:dateTime && 
+            ?from < "2026-01-01T00:00:00"^^xsd:dateTime)
+  }
+}
+ORDER BY ASC(?from)
+  `,
   
   'TTL': `PREFIX sosa: <http://www.w3.org/ns/sosa/>
 PREFIX ex: <http://example.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
 SELECT ?subject ?value ?time ?runoffvalue ?observedproperty
 WHERE {
-  ?subject sosa:hasSimpleResult ?value ;
-           sosa:resultTime ?time;
-           sosa:observedProperty ?observedproperty .
-           
-  OPTIONAL { 
-    ?subject ex:hasRunoff ?runoffvalue 
+  GRAPH <http://example.com/graph/ttl> {
+    ?subject sosa:hasSimpleResult ?value ;
+             sosa:resultTime ?time ;
+             sosa:observedProperty ?observedproperty .
+             
+    FILTER (?time >= "2025-01-01T00:00:00"^^xsd:dateTime && 
+            ?time < "2026-01-01T00:00:00"^^xsd:dateTime)
   }
+  OPTIONAL { ?subject ex:hasRunoff ?runoffvalue . }
 }
-ORDER BY DESC(?time)`
+ORDER BY DESC(?time)
+`
+
+
 };
 
 export const QueryCard = () => {
