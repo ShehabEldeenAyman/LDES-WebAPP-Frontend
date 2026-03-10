@@ -33,7 +33,8 @@ const innerStyles = {
   },
   textarea: {
     width: '100%',
-    height: '150px',
+    height: '21em',
+    minHeight: '21em',
     padding: '10px',
     borderRadius: '8px',
     border: '1px solid #ddd',
